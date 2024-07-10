@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { UserService } from './user.service';
-import { User } from './user';
+import { User, UserLogin } from './user';
 import { Users } from './users';
 import { ApiTags } from '@nestjs/swagger';
 
@@ -22,6 +22,11 @@ export class UserController {
     @Post()
     create(@Body() user: User) {
         this.userService.create(user);
+    }
+
+    @Post("/login")
+    login(@Body() userLogin: UserLogin) {
+        this.userService.login(userLogin.login, userLogin.password);
     }
 
     @Delete(':id')

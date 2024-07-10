@@ -21,7 +21,6 @@ export class UserService {
         return users;
     }
 
-
     async find(id: string){
         const q = await this.userRef.doc(id).get();
         const user = {
@@ -38,6 +37,18 @@ export class UserService {
             surname: user.surname,
             saved: savedRefs
         })
+    }
+
+    async login(email, password){
+        let token = '';
+        firebase.auth().signInWithEmailAndPassword(email, password)
+            .then(({user}) => {
+                user.getIdToken().then(res => {
+                    token = res
+                })
+            })
+
+        return token;
     }
 
     async delete(id: string){

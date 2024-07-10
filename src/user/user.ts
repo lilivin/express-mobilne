@@ -6,3 +6,8 @@ export class User {
     readonly surname: string
     readonly saved: DocumentReference[]
 }
+
+export class UserLogin {
+    login: string
+    password: string
+}

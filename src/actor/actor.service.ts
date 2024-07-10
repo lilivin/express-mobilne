@@ -42,7 +42,8 @@ export class ActorService {
             const filmData = await firebase.firestore().doc(filmPath).get();
             return {
                 id: doc.data().film.id,
-                title: filmData.data().title
+                title: filmData.data().title,
+                image: filmData.data().image
             }
         });
     
@@ -53,7 +54,10 @@ export class ActorService {
     async create(actor: Actor){
         return await this.actorRef.add({
             name: actor.name,
-            surname: actor.surname
+            surname: actor.surname,
+            image: actor.image,
+            description: actor.description,
+            shortDescription: actor.shortDescription
         })
     }
 
@@ -64,7 +68,10 @@ export class ActorService {
     async put(actor: Actor){
         return await this.actorRef.doc(actor.id).update({
             name: actor.name,
-            surname: actor.surname
+            surname: actor.surname,
+            image: actor.image,
+            description: actor.description,
+            shortDescription: actor.shortDescription
         });
     }
 }

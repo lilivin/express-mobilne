@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { firebase } from '../firebaseConfig';
 import { getDoc, getDocs, query } from "firebase/firestore"
-import { Film } from './film';
+import { Film, Review } from './film';
 
 @Injectable()
 export class FilmService {
     filmRef = firebase.firestore().collection('film');
     filmActorRef = firebase.firestore().collection('film_actor');
     reviewRef = firebase.firestore().collection('review');
+    userRef = firebase.firestore().collection('user');
 
     async findAll() {
         const q = query(this.filmRef);
@@ -67,7 +68,10 @@ export class FilmService {
         const actorPromises = data.docs.map(async (doc) => {
             const actorPath = doc.data().actor.path;
             const actorData = await firebase.firestore().doc(actorPath).get();
-            return actorData.data();
+            return {
+                id: doc.data().actor.id,
+                ...actorData.data()
+            };
         });
     
         actors = await Promise.all(actorPromises);
@@ -78,19 +82,27 @@ export class FilmService {
         const filmDocRef = this.filmRef.doc(id);
         const q = this.reviewRef.where("film", "==", filmDocRef);
         const data = await getDocs(q);
-        
         let reviews = [];
         const reviewsPromises = data.docs.map(async (doc) => {
-            const userPath = doc.data().user.path;
-            const userData = await firebase.firestore().doc(userPath).get();
+            // const userPath = doc.data().user.path;
+            // const userData = await firebase.firestore().doc(userPath).get();
             return {
                 text: doc.data().text,
-                user: userData.data()
+                user: doc.data().user
             }
         });
     
         reviews = await Promise.all(reviewsPromises);
         return reviews;
+    }
+
+    async createReviews(id: string, review: Review){
+        const filmDocRef = this.filmRef.doc(id);
+        return await this.reviewRef.add({
+            film: this.filmRef.doc(review.filmId),
+            text: review.text,
+            user: review.user,
+        });
     }
 
     async create(film: Film){

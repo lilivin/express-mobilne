@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common'
 import { Films } from './films';
 import { FilmService } from './film.service';
 import { ApiTags } from '@nestjs/swagger';
-import { Film } from './film';
+import { Film, Review } from './film';
 import { Actors } from 'src/actor/actors';
 import { User } from 'src/user/user';
 
@@ -27,8 +27,13 @@ export class FilmController {
     }
 
     @Get(':id/reviews')
-    async findReviews(@Param('id') id: string): Promise<Actors> {
+    async findReviews(@Param('id') id: string): Promise<any> {
         return this.filmService.findReviews(id);
+    }
+
+    @Post(':id/reviews')
+    createReview(@Param('id') id: string, @Body() review: Review) {
+        this.filmService.createReviews(id, review);
     }
 
     @Post()

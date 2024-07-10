@@ -10,3 +10,9 @@ export class Film {
     director: DocumentReference
     platforms: DocumentReference[]
 }
+
+export class Review {
+    filmId: string
+    text: string
+    user: string
+}
